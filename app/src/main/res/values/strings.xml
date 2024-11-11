@@ -264,4 +264,8 @@
   <string name="touch_to_play_audio">Touch to play audio</string>
   <string name="title_unread_count" translatable="false">(%1$d)</string>
   <string name="show_title_unread_count">Show unread article count in title</string>
+  <!-- aggiunta per traduzione articolo -->
+  <string name="translate_article">Translate Article</string>
+  <string name="translate_language">Translate to language</string>
+
 </resources>

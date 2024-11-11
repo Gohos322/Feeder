@@ -54,7 +54,7 @@ private const val LOG_TAG = "FEEDER_APPDB"
     views = [
         FeedsWithItemsForNavDrawer::class,
     ],
-    version = 36,
+    version = 37,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -135,7 +135,28 @@ fun getAllMigrations(di: DI) =
         MigrationFrom33To34(di),
         MigrationFrom34To35(di),
         MigrationFrom35To36(di),
+        MigrationFrom36To37(di),
     )
+
+/*
+ * 6 represents legacy database
+ * 7 represents new Room database
+ */
+class MigrationFrom36To37(override val di: DI) : Migration(36, 37), DIAware {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        // TODO add column retry_after to feeds, default epoch, not null
+        database.execSQL(
+            """
+            ALTER TABLE feeds ADD COLUMN translate_by_default INTEGER NOT NULL DEFAULT 0
+            """.trimIndent(),
+        )
+        database.execSQL(
+            """
+            ALTER TABLE feeds ADD COLUMN source_language TEXT NOT NULL DEFAULT ''
+            """.trimIndent(),
+        )
+    }
+}
 
 /*
  * 6 represents legacy database

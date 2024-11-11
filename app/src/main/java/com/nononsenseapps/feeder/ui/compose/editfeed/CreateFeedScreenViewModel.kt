@@ -46,6 +46,10 @@ class CreateFeedScreenViewModel(
     override var defaultTitle: String by mutableStateOf(state["feedTitle"] ?: "")
     override var feedImage: String by mutableStateOf(state["feedImage"] ?: "")
 
+    //aggiunta per traduzione
+    override var translateDefault: Boolean by mutableSavedStateOf(state, false)
+    override var sourceLangValue: String by mutableStateOf("en")
+
     override val isOpenItemWithBrowser: Boolean
         get() = articleOpener == PREF_VAL_OPEN_WITH_BROWSER
 

@@ -73,6 +73,7 @@ import com.nononsenseapps.feeder.ui.compose.components.OkCancelWithContent
 import com.nononsenseapps.feeder.ui.compose.feed.ExplainPermissionDialog
 import com.nononsenseapps.feeder.ui.compose.modifiers.interceptKey
 import com.nononsenseapps.feeder.ui.compose.settings.GroupTitle
+import com.nononsenseapps.feeder.ui.compose.settings.MenuSetting
 import com.nononsenseapps.feeder.ui.compose.settings.RadioButtonSetting
 import com.nononsenseapps.feeder.ui.compose.settings.SwitchSetting
 import com.nononsenseapps.feeder.ui.compose.theme.FeederTheme
@@ -83,6 +84,7 @@ import com.nononsenseapps.feeder.ui.compose.utils.ImmutableHolder
 import com.nononsenseapps.feeder.ui.compose.utils.LocalWindowSizeMetrics
 import com.nononsenseapps.feeder.ui.compose.utils.ScreenType
 import com.nononsenseapps.feeder.ui.compose.utils.getScreenType
+import com.nononsenseapps.feeder.ui.compose.utils.immutableListHolderOf
 import com.nononsenseapps.feeder.ui.compose.utils.rememberApiPermissionState
 
 @Composable
@@ -514,6 +516,24 @@ fun ColumnScope.RightContent(
         description = stringResource(id = R.string.only_enable_for_bad_id_feeds),
         icon = null,
     ) { viewState.alternateId = it }
+    //gestione traduzione articolo
+    SwitchSetting(
+        title = stringResource(id = R.string.translate_article),
+        checked = viewState.translateDefault,
+        icon = null,
+        modifier =
+        Modifier
+            .focusRequester(rightFocusRequester)
+            .focusProperties {
+                previous = leftFocusRequester
+            },
+    ) { viewState.translateDefault = it }
+    MenuSetting(
+        currentValue = viewState.sourceLangValue,
+        values = immutableListHolderOf("en", "ja", "ru", "kr"),
+        title = stringResource(id = R.string.translate_language),
+    ) { viewState.sourceLangValue = it }
+
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     GroupTitle(
         startingSpace = false,
@@ -578,6 +598,9 @@ interface EditFeedScreenState {
     val allTags: List<String>
     val defaultTitle: String
     val feedImage: String
+    // aggiunta per traduzione
+    var translateDefault: Boolean
+    var sourceLangValue: String
 }
 
 fun EditFeedScreenState(): EditFeedScreenState = ScreenState()
@@ -601,6 +624,9 @@ private class ScreenState(
     override var skipDuplicates: Boolean by mutableStateOf(false)
     override var articleOpener: String by mutableStateOf("")
     override var alternateId: Boolean by mutableStateOf(false)
+    //aggiunta per traduzione
+    override var translateDefault: Boolean by mutableStateOf(false)
+    override var sourceLangValue: String by mutableStateOf("en")
 }
 
 @Preview("Edit Feed Phone")
