@@ -74,6 +74,7 @@ import com.nononsenseapps.feeder.ui.compose.components.OkCancelWithContent
 import com.nononsenseapps.feeder.ui.compose.feed.ExplainPermissionDialog
 import com.nononsenseapps.feeder.ui.compose.modifiers.interceptKey
 import com.nononsenseapps.feeder.ui.compose.settings.GroupTitle
+import com.nononsenseapps.feeder.ui.compose.settings.MenuSetting
 import com.nononsenseapps.feeder.ui.compose.settings.RadioButtonSetting
 import com.nononsenseapps.feeder.ui.compose.settings.SwitchSetting
 import com.nononsenseapps.feeder.ui.compose.theme.LocalDimens
@@ -83,6 +84,7 @@ import com.nononsenseapps.feeder.ui.compose.utils.ImmutableHolder
 import com.nononsenseapps.feeder.ui.compose.utils.LocalWindowSizeMetrics
 import com.nononsenseapps.feeder.ui.compose.utils.ScreenType
 import com.nononsenseapps.feeder.ui.compose.utils.getScreenType
+import com.nononsenseapps.feeder.ui.compose.utils.immutableListHolderOf
 import com.nononsenseapps.feeder.ui.compose.utils.rememberApiPermissionState
 import com.nononsenseapps.feeder.util.isNostrUri
 
