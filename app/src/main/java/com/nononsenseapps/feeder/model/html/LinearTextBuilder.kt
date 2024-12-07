@@ -1,15 +1,21 @@
 package com.nononsenseapps.feeder.model.html
 
 import com.nononsenseapps.feeder.util.logDebug
+import okhttp3.HttpUrl
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import java.util.Locale
 
-class LinearTextBuilder : Appendable {
+class LinearTextBuilder(private val translateByDefault: Boolean? = false) : Appendable {
     private data class MutableRange<T>(
         val item: T,
         var start: Int,
         var end: Int? = null,
     )
 
-    private val text: StringBuilder = StringBuilder(16)
+    private var text: StringBuilder = StringBuilder(16)
     private val annotations: MutableList<MutableRange<LinearTextAnnotationData>> = mutableListOf()
     private val annotationsStack: MutableList<MutableRange<LinearTextAnnotationData>> = mutableListOf()
     private val mLastTwoChars: MutableList<Char> = mutableListOf()
@@ -133,15 +139,21 @@ class LinearTextBuilder : Appendable {
     fun toLinearText(blockStyle: LinearTextBlockStyle): LinearText {
         // Chop of possible ending whitespace - looks bad in code blocks for instance
         val trimmed = text.toString().trimEnd()
+        var translatedText = trimmed
+        if (this.translateByDefault == true) {
+            translatedText = translateText(trimmed)
+            text = StringBuilder(translatedText)
+        }
+
         return LinearText(
             // Copy the set to avoid modifications
             ids = ids.toSet(),
-            text = trimmed,
+            text = translatedText,
             blockStyle = blockStyle,
             annotations =
                 annotations.mapNotNull {
-                    val start = it.start.coerceAtMost(trimmed.lastIndex)
-                    val end = (it.end ?: text.lastIndex).coerceAtMost(trimmed.lastIndex)
+                    val start = it.start.coerceAtMost(translatedText.lastIndex)
+                    val end = (it.end ?: text.lastIndex).coerceAtMost(translatedText.lastIndex)
 
                     if (start < 0 || end < 0 || start > end) {
                         // This can happen if the link encloses an image for example
@@ -156,6 +168,41 @@ class LinearTextBuilder : Appendable {
                     }
                 },
         )
+    }
+
+    fun translateText(text: String): String {
+
+        val client = OkHttpClient()
+        val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        val max = if (text.length > 500) 500 else text.length
+        val targetLanguage = Locale.getDefault().language
+        val urlBuilder = HttpUrl.Builder()
+                        .scheme("https")
+                        .host("api.mymemory.translated.net")
+                        .addPathSegment("get")
+                        .addQueryParameter("q", text.substring(0,max))
+                        .addQueryParameter("langpair", "it|".plus(targetLanguage))
+                        .addQueryParameter("de", "translate@gmail.com")
+                        .build()
+
+        val request = Request.Builder()
+                            .url(urlBuilder)
+                            .build()
+
+
+        client.newCall(request).execute().use { response ->
+            val responseData = response.body?.string()
+            if (!response.isSuccessful) {
+                //logDebug(LOG_TAG, "Error: http status ${response.code} body: $responseData")
+                return text
+            }
+            val jsonResponse = responseData?.let { JSONObject(it) }
+            if (jsonResponse != null) {
+                return jsonResponse.getJSONObject("responseData").getString("translatedText")
+            } else {
+                return text
+            }
+        }
     }
 
     /**

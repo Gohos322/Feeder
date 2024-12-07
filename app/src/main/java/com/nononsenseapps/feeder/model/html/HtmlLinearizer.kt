@@ -8,6 +8,7 @@ import com.nononsenseapps.feeder.ui.text.getVideo
 import com.nononsenseapps.feeder.util.asUTF8Sequence
 import com.nononsenseapps.feeder.util.logDebug
 import org.jsoup.Jsoup
+import org.jsoup.helper.StringUtil
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
@@ -17,8 +18,8 @@ import java.net.URL
 
 typealias IdHolder = (String) -> Unit
 
-class HtmlLinearizer {
-    private var linearTextBuilder: LinearTextBuilder = LinearTextBuilder()
+class HtmlLinearizer(translateByDefault: Boolean? = false) {
+    private var linearTextBuilder: LinearTextBuilder = LinearTextBuilder(translateByDefault)
     private var idHolder: IdHolder = {
         linearTextBuilder.pushId(it)
     }
