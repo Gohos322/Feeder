@@ -186,6 +186,7 @@ class HtmlLinearizer(private var translateByDefault: Boolean? = false, private v
                         }
 
                         "strong", "b" -> {
+
                             withLinearTextAnnotation(LinearTextAnnotationBold) {
                                 linearizeChildren(
                                     element.childNodes(),
