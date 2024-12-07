@@ -14,8 +14,8 @@ import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 import java.io.InputStream
 
-class HtmlLinearizer {
-    private var linearTextBuilder: LinearTextBuilder = LinearTextBuilder()
+class HtmlLinearizer(translateByDefault: Boolean? = false) {
+    private var linearTextBuilder: LinearTextBuilder = LinearTextBuilder(translateByDefault)
 
     fun linearize(
         html: String,
@@ -46,7 +46,7 @@ class HtmlLinearizer {
         body: Element,
         baseUrl: String,
     ): List<LinearElement> {
-        return ListBuilderScope {
+        return  ListBuilderScope {
             asElement(blockStyle = LinearTextBlockStyle.TEXT) {
                 linearizeChildren(
                     body.childNodes(),
@@ -175,6 +175,7 @@ class HtmlLinearizer {
                         }
 
                         "strong", "b" -> {
+
                             withLinearTextAnnotation(LinearTextAnnotationBold) {
                                 linearizeChildren(
                                     element.childNodes(),

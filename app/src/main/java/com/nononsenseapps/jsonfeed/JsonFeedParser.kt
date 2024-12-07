@@ -121,9 +121,20 @@ class JsonFeedParser(
     /**
      * Parse a JSONFeed
      */
-    fun parseJson(json: String): Feed =
-        jsonFeedAdapter.fromJson(json)
+    fun parseJson(json: String): Feed {
+        val feed = jsonFeedAdapter.fromJson(json)
             ?: throw IOException("Failed to parse JSONFeed")
+
+        // Scorri la lista e modifica una proprietà di ciascun oggetto
+        //feed.items?.forEach { item ->
+        //    item.translated_title = item.title
+        //    item.translated_content_text = item.content_text
+        //    item.title = "Testo del titolo tradotto"
+         //   item.content_text = "Testo dell'articolo tradotto"
+        //}
+
+        return feed
+    }
 }
 
 data class Feed(
@@ -152,9 +163,11 @@ data class Item(
     val id: String?,
     val url: String? = null,
     val external_url: String? = null,
-    val title: String? = null,
+    var title: String? = null,
+    var translated_title: String? = null,
     val content_html: String? = null,
-    val content_text: String? = null,
+    var content_text: String? = null,
+    var translated_content_text: String? = null,
     val summary: String? = null,
     val image: String? = null,
     val banner_image: String? = null,
