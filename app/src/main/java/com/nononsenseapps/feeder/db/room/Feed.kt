@@ -19,6 +19,7 @@ import com.nononsenseapps.feeder.db.COL_RETRY_AFTER
 import com.nononsenseapps.feeder.db.COL_SITE_FETCHED
 import com.nononsenseapps.feeder.db.COL_SKIP_DUPLICATES
 import com.nononsenseapps.feeder.db.COL_SOURCE_LANGUAGE
+import com.nononsenseapps.feeder.db.COL_TARGET_LANGUAGE
 import com.nononsenseapps.feeder.db.COL_TAG
 import com.nononsenseapps.feeder.db.COL_TITLE
 import com.nononsenseapps.feeder.db.COL_TRANSLATE_BY_DEFAULT
@@ -63,6 +64,7 @@ data class Feed
         @ColumnInfo(name = COL_RETRY_AFTER) var retryAfter: Instant = Instant.EPOCH,
         @ColumnInfo(name= COL_TRANSLATE_BY_DEFAULT) var translateDefault: Boolean= false,
         @ColumnInfo(name= COL_SOURCE_LANGUAGE) var sourceLangValue: String= "",
+        @ColumnInfo(name= COL_TARGET_LANGUAGE) var targetLangValue: String= "",
     ) {
         constructor() : this(id = ID_UNSET)
 

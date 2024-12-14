@@ -140,10 +140,10 @@ class LinearTextBuilder(private val translateByDefault: Boolean? = false) : Appe
         // Chop of possible ending whitespace - looks bad in code blocks for instance
         val trimmed = text.toString().trimEnd()
         var translatedText = trimmed
-        if (this.translateByDefault == true) {
+        /*if (this.translateByDefault == true) {
             translatedText = translateText(trimmed)
             text = StringBuilder(translatedText)
-        }
+        }*/
 
         return LinearText(
             // Copy the set to avoid modifications

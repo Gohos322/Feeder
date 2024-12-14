@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.shouldShowRationale
+import com.google.mlkit.nl.translate.TranslateLanguage
 import com.nononsenseapps.feeder.R
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_BROWSER
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_CUSTOM_TAB
@@ -520,7 +521,30 @@ fun ColumnScope.RightContent(
         { viewState.alternateId = it },
         description = stringResource(id = R.string.only_enable_for_bad_id_feeds),
         icon = null,
-    )
+    ) { viewState.alternateId = it }
+    //gestione traduzione articolo
+    SwitchSetting(
+        title = stringResource(id = R.string.translate_article),
+        checked = viewState.translateDefault,
+        icon = null,
+        modifier =
+        Modifier
+            .focusRequester(rightFocusRequester)
+            .focusProperties {
+                previous = leftFocusRequester
+            },
+    ) { viewState.translateDefault = it }
+    MenuSetting(
+        currentValue = viewState.sourceLangValue,
+        values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
+        title = stringResource(id = R.string.translate_language),
+    ) { viewState.sourceLangValue = it }
+    MenuSetting(
+        currentValue = viewState.targetLangValue,
+        values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
+        title = stringResource(id = R.string.translate_from_language),
+    ) { viewState.targetLangValue = it }
+
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     GroupTitle(
         startingSpace = false,
@@ -585,6 +609,10 @@ interface EditFeedScreenState {
     val allTags: List<String>
     val defaultTitle: String
     val feedImage: String
+    // aggiunta per traduzione
+    var translateDefault: Boolean
+    var sourceLangValue: String
+    var targetLangValue: String
 }
 
 fun EditFeedScreenState(): EditFeedScreenState = ScreenState()
@@ -608,6 +636,10 @@ private class ScreenState(
     override var skipDuplicates: Boolean by mutableStateOf(false)
     override var articleOpener: String by mutableStateOf("")
     override var alternateId: Boolean by mutableStateOf(false)
+    //aggiunta per traduzione
+    override var translateDefault: Boolean by mutableStateOf(false)
+    override var sourceLangValue: String by mutableStateOf(TranslateLanguage.ENGLISH)
+    override var targetLangValue: String by mutableStateOf(TranslateLanguage.ENGLISH)
 }
 
 @Preview("Edit Feed Phone")

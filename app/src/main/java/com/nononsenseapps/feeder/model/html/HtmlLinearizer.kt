@@ -20,7 +20,7 @@ import java.net.URL
 
 typealias IdHolder = (String) -> Unit
 
-class HtmlLinearizer(translateByDefault: Boolean? = false) {
+class HtmlLinearizer(private var translateByDefault: Boolean? = false, private var sourceLanguage: String?, private var targetLanguage: String?) {
     private var linearTextBuilder: LinearTextBuilder = LinearTextBuilder(translateByDefault)
     private var idHolder: IdHolder = {
         linearTextBuilder.pushId(it)
@@ -41,11 +41,15 @@ class HtmlLinearizer(translateByDefault: Boolean? = false) {
                 Jsoup.parse(inputStream, null, baseUrl)
                     .body()
                     .let { body ->
-                        val htmlTranslator = HtmlTranslator()
-                        val translatedText = runBlocking {
-                            htmlTranslator.translateHtmlFromUrl(body.html(), "targetLanguage")
+                        if (translateByDefault == true) {
+                            val htmlTranslator = HtmlTranslator()
+                            val translatedText = runBlocking {
+                                htmlTranslator.translateHtml(body.html(), sourceLanguage, targetLanguage)
+                            }
+                            linearizeBody(Jsoup.parse(translatedText).body(), baseUrl)
+                        } else {
+                            linearizeBody(body, baseUrl)
                         }
-                        linearizeBody(Jsoup.parse(translatedText).body(), baseUrl)
                     }
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "htmlFormattingFailed", e)
