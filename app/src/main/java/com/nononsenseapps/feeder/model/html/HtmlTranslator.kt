@@ -6,14 +6,14 @@ import kotlinx.coroutines.withContext
 
 class HtmlTranslator() {
 
-    suspend fun translateHtmlFromUrl(textToTranslate: String, targetLanguage: String): String {
+    suspend fun translateHtml(textToTranslate: String, sourceLanguage: String?, targetLanguage: String?): String {
         return withContext(Dispatchers.IO) {
             try {
                 // Effettua la traduzione
-                val translatedText = translateText(textToTranslate, targetLanguage)
+                val translatedText = translateText(textToTranslate, sourceLanguage, targetLanguage)
                 var newtranslatedText = translatedText.replace("</ ", "</")
-                newtranslatedText = newtranslatedText.replace("& nbsp;".toRegex(RegexOption.IGNORE_CASE), "&nbsp;")
-                newtranslatedText = newtranslatedText.replace("& nbsp".toRegex(RegexOption.IGNORE_CASE), "&nbsp;")
+                                                      .replace("& nbsp;".toRegex(RegexOption.IGNORE_CASE), "&nbsp;")
+                                                      .replace("& nbsp".toRegex(RegexOption.IGNORE_CASE), "&nbsp;")
                 newtranslatedText
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -22,10 +22,10 @@ class HtmlTranslator() {
         }
     }
 
-    private suspend fun translateText(text: String, targetLanguage: String): String {
+    private suspend fun translateText(text: String, sourceLanguage: String?, targetLanguage: String?): String {
         val options = TranslatorOptions.Builder()
-            .setSourceLanguage(TranslateLanguage.ENGLISH) // Lingua sorgente (da modificare se necessario)
-            .setTargetLanguage(TranslateLanguage.ITALIAN)
+            .setSourceLanguage(sourceLanguage.toString()) // Lingua sorgente (da modificare se necessario)
+            .setTargetLanguage(targetLanguage.toString())
             .build()
         val translator = Translation.getClient(options)
 

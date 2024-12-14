@@ -267,5 +267,6 @@
   <!-- aggiunta per traduzione articolo -->
   <string name="translate_article">Translate Article</string>
   <string name="translate_language">Translate to language</string>
+  <string name="translate_from_language">Translate from language</string>
 
 </resources>

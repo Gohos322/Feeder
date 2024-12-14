@@ -17,7 +17,7 @@ import org.jsoup.nodes.TextNode
 import java.io.InputStream
 
 
-class HtmlLinearizer(translateByDefault: Boolean? = false) {
+class HtmlLinearizer(private var translateByDefault: Boolean? = false, private var sourceLanguage: String?, private var targetLanguage: String?) {
     private var linearTextBuilder: LinearTextBuilder = LinearTextBuilder(translateByDefault)
 
     fun linearize(
@@ -35,11 +35,15 @@ class HtmlLinearizer(translateByDefault: Boolean? = false) {
                 Jsoup.parse(inputStream, null, baseUrl)
                     ?.body()
                     ?.let { body ->
-                        val htmlTranslator = HtmlTranslator()
-                        val translatedText = runBlocking {
-                            htmlTranslator.translateHtmlFromUrl(body.html(), "targetLanguage")
+                        if (translateByDefault == true) {
+                            val htmlTranslator = HtmlTranslator()
+                            val translatedText = runBlocking {
+                                htmlTranslator.translateHtml(body.html(), sourceLanguage, targetLanguage)
+                            }
+                            linearizeBody(Jsoup.parse(translatedText).body(), baseUrl)
+                        } else {
+                            linearizeBody(body, baseUrl)
                         }
-                        linearizeBody(Jsoup.parse(translatedText).body(), baseUrl)
 //                        linearizeBody(body, baseUrl)
                     }
                     ?: emptyList()

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.nl.translate.TranslateLanguage
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_BROWSER
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_CUSTOM_TAB
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_READER
@@ -48,7 +49,8 @@ class CreateFeedScreenViewModel(
 
     //aggiunta per traduzione
     override var translateDefault: Boolean by mutableSavedStateOf(state, false)
-    override var sourceLangValue: String by mutableStateOf("en")
+    override var sourceLangValue: String by mutableStateOf(TranslateLanguage.ENGLISH)
+    override var targetLangValue: String by mutableStateOf(TranslateLanguage.ENGLISH)
 
     override val isOpenItemWithBrowser: Boolean
         get() = articleOpener == PREF_VAL_OPEN_WITH_BROWSER

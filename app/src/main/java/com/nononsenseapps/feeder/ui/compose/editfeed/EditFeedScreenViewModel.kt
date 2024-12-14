@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.nl.translate.TranslateLanguage
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_BROWSER
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_CUSTOM_TAB
 import com.nononsenseapps.feeder.archmodel.PREF_VAL_OPEN_WITH_READER
@@ -44,7 +45,8 @@ class EditFeedScreenViewModel(
 
     //aggiunta per traduzione
     override var translateDefault: Boolean by mutableSavedStateOf(state, false)
-    override var sourceLangValue: String by mutableStateOf("en")
+    override var sourceLangValue: String by mutableStateOf(TranslateLanguage.ENGLISH)
+    override var targetLangValue: String by mutableStateOf(TranslateLanguage.ENGLISH)
 
     override var skipDuplicates: Boolean by mutableSavedStateOf(state, false)
     override var notify: Boolean by mutableSavedStateOf(state, false)
@@ -120,6 +122,9 @@ class EditFeedScreenViewModel(
             if (!state.contains("sourceLangValue")) {
                 sourceLangValue = feed.sourceLangValue
             }
+            if (!state.contains("targetLangValue")) {
+                targetLangValue = feed.targetLangValue
+            }
 
             repository.allTags
                 .collect { value ->
@@ -147,6 +152,7 @@ class EditFeedScreenViewModel(
                     alternateId = alternateId,
                     translateDefault = translateDefault,
                     sourceLangValue = sourceLangValue,
+                    targetLangValue = targetLangValue,
                 )
 
             // No point in doing anything unless they actually differ

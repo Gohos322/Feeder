@@ -131,10 +131,10 @@ class LinearTextBuilder(private val translateByDefault: Boolean? = false) : Appe
         val trimmed = text.toString().trimEnd()
         // val trimmed = "bella pe te"
         var translatedText = trimmed
-        if (this.translateByDefault == true) {
+        /*if (this.translateByDefault == true) {
             translatedText = translateText(trimmed)
             text = StringBuilder(translatedText)
-        }
+        }*/
 
         return LinearText(
             text = translatedText,
