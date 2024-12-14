@@ -253,6 +253,12 @@ dependencies {
 
     // Markdown
     implementation(libs.jetbrains.markdown)
+    implementation ("com.google.mlkit:translate:17.0.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.2")
+
+
 
     // Only for debug
     debugImplementation("com.squareup.leakcanary:leakcanary-android:3.0-alpha-8")

@@ -1,5 +1,6 @@
 package com.nononsenseapps.feeder.model.html
 
+import HtmlTranslator
 import android.util.Log
 import com.nononsenseapps.feeder.ui.compose.text.ancestors
 import com.nononsenseapps.feeder.ui.compose.text.attrInHierarchy
@@ -7,6 +8,7 @@ import com.nononsenseapps.feeder.ui.compose.text.stripHtml
 import com.nononsenseapps.feeder.ui.text.getVideo
 import com.nononsenseapps.feeder.util.asUTF8Sequence
 import com.nononsenseapps.feeder.util.logDebug
+import kotlinx.coroutines.runBlocking
 import org.jsoup.Jsoup
 import org.jsoup.helper.StringUtil
 import org.jsoup.nodes.Element
@@ -35,17 +37,20 @@ class HtmlLinearizer(translateByDefault: Boolean? = false) {
     ): LinearArticle =
         LinearArticle(
             elements =
-                try {
-                    Jsoup
-                        .parse(inputStream, null, baseUrl)
-                        .body()
-                        .let { body ->
-                            linearizeBody(body, baseUrl)
+            try {
+                Jsoup.parse(inputStream, null, baseUrl)
+                    .body()
+                    .let { body ->
+                        val htmlTranslator = HtmlTranslator()
+                        val translatedText = runBlocking {
+                            htmlTranslator.translateHtmlFromUrl(body.html(), "targetLanguage")
                         }
-                } catch (e: Exception) {
-                    Log.e(LOG_TAG, "htmlFormattingFailed", e)
-                    emptyList()
-                },
+                        linearizeBody(Jsoup.parse(translatedText).body(), baseUrl)
+                    }
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "htmlFormattingFailed", e)
+                emptyList()
+            },
         )
 
     private fun linearizeBody(
