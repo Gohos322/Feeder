@@ -162,6 +162,7 @@ class ArticleViewModel(
                 isBookmarked = article?.bookmarked == true,
                 translateByDefault = article?.item?.translateByDefault,
                 sourceLanguage = article?.item?.sourceLanguage,
+                targetLanguage = article?.item?.targetLanguage,
                 wordCount =
                     if (isFullText) {
                         article?.wordCountFull ?: 0
@@ -186,7 +187,7 @@ class ArticleViewModel(
         logDebug(LOG_TAG, "parseArticleContent(${article.id}, $fullText)")
         return try {
             withContext(Dispatchers.IO) {
-                val htmlLinearizer = HtmlLinearizer(viewState.value.translateByDefault)
+                val htmlLinearizer = HtmlLinearizer(viewState.value.translateByDefault, viewState.value.sourceLanguage, viewState.value.targetLanguage)
                 when (fullText) {
                     false -> {
                         if (blobFile(article.id, filePathProvider.articleDir).isFile) {
@@ -457,7 +458,8 @@ private data class ArticleState(
     override val openAiSummary: OpenAISummaryState = OpenAISummaryState.Empty,
     override val articleContent: LinearArticle = LinearArticle(emptyList()),
     override val translateByDefault: Boolean? = false,
-    override val sourceLanguage: String? = ""
+    override val sourceLanguage: String? = "",
+    override val targetLanguage: String? = ""
 ) : ArticleScreenViewState
 
 @Immutable
@@ -487,6 +489,7 @@ interface ArticleScreenViewState {
     val articleContent: LinearArticle
     val translateByDefault: Boolean?
     val sourceLanguage: String?
+    val targetLanguage: String?
 }
 
 sealed interface OpenAISummaryState {

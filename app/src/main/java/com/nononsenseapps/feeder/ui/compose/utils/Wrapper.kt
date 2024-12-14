@@ -42,6 +42,11 @@ fun <T> immutableListHolderOf(vararg elements: T): ImmutableHolder<List<T>> =
         listOf(*elements),
     )
 
+fun <T> immutableListHolderOf(elements: List<T>): ImmutableHolder<List<T>> =
+    ImmutableHolder(
+        elements,
+    )
+
 fun <T> stableListHolderOf(vararg elements: T): StableHolder<List<T>> =
     StableHolder(
         listOf(*elements),

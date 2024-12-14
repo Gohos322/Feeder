@@ -892,7 +892,8 @@ data class Article(
     val bookmarked: Boolean = item?.bookmarked ?: false
     val fullTextByDefault: Boolean = item?.fullTextByDefault ?: false
     val translateByDefault: Boolean = item?.translateByDefault ?: false
-    val sourceLanguage: String? = item?.sourceLanguage
+    val sourceLanguage: String = item?.sourceLanguage!!
+    val targetLanguage: String = item?.targetLanguage!!
     val wordCount: Int = item?.wordCount ?: 0
     val wordCountFull: Int = item?.wordCountFull ?: 0
     val image: ThumbnailImage? = item?.thumbnailImage

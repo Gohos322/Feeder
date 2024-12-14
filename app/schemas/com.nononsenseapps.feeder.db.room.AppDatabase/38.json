@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 37,
+    "version": 38,
     "identityHash": "00763bc5e62c2bcbe766a41ac246cd7f",
     "entities": [
       {
@@ -47,7 +47,8 @@
           {
             "fieldPath": "imageUrl",
             "columnName": "image_url",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "lastSync",
@@ -155,7 +156,8 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_feeds_id_url_title` ON `${TABLE_NAME}` (`id`, `url`, `title`)"
           }
-        ]
+        ],
+        "foreignKeys": []
       },
       {
         "tableName": "feed_items",
@@ -194,7 +196,8 @@
           {
             "fieldPath": "thumbnailImage",
             "columnName": "image_url",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "imageFromBody",
@@ -205,27 +208,32 @@
           {
             "fieldPath": "enclosureLink",
             "columnName": "enclosure_link",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "enclosureType",
             "columnName": "enclosure_type",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "author",
             "columnName": "author",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "pubDate",
             "columnName": "pub_date",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "link",
             "columnName": "link",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "oldUnread",
@@ -242,7 +250,8 @@
           {
             "fieldPath": "feedId",
             "columnName": "feed_id",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "firstSyncedTime",
@@ -277,7 +286,8 @@
           {
             "fieldPath": "readTime",
             "columnName": "read_time",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "wordCount",
@@ -294,7 +304,8 @@
           {
             "fieldPath": "blockTime",
             "columnName": "block_time",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -391,7 +402,8 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_blocklist_glob_pattern` ON `${TABLE_NAME}` (`glob_pattern`)"
           }
-        ]
+        ],
+        "foreignKeys": []
       },
       {
         "tableName": "sync_remote",
@@ -451,7 +463,9 @@
           "columnNames": [
             "id"
           ]
-        }
+        },
+        "indices": [],
+        "foreignKeys": []
       },
       {
         "tableName": "read_status_synced",

@@ -21,6 +21,7 @@ import com.nononsenseapps.feeder.db.COL_PLAINTITLE
 import com.nononsenseapps.feeder.db.COL_PUBDATE
 import com.nononsenseapps.feeder.db.COL_READ_TIME
 import com.nononsenseapps.feeder.db.COL_SOURCE_LANGUAGE
+import com.nononsenseapps.feeder.db.COL_TARGET_LANGUAGE
 import com.nononsenseapps.feeder.db.COL_TAG
 import com.nononsenseapps.feeder.db.COL_TITLE
 import com.nononsenseapps.feeder.db.COL_TRANSLATE_BY_DEFAULT
@@ -47,6 +48,7 @@ const val FEED_ITEM_COLUMNS_WITH_FEED = """
     $FEEDS_TABLE_NAME.$COL_FULLTEXT_BY_DEFAULT AS $COL_FULLTEXT_BY_DEFAULT,
     $FEEDS_TABLE_NAME.$COL_TRANSLATE_BY_DEFAULT AS $COL_TRANSLATE_BY_DEFAULT,
     $FEEDS_TABLE_NAME.$COL_SOURCE_LANGUAGE AS $COL_SOURCE_LANGUAGE,
+    $FEEDS_TABLE_NAME.$COL_TARGET_LANGUAGE AS $COL_TARGET_LANGUAGE,
     $COL_BOOKMARKED,
     $COL_WORD_COUNT,
     $COL_WORD_COUNT_FULL
@@ -76,6 +78,7 @@ data class FeedItemWithFeed
         @ColumnInfo(name = COL_FULLTEXT_BY_DEFAULT) var fullTextByDefault: Boolean = false,
         @ColumnInfo(name = COL_TRANSLATE_BY_DEFAULT) var translateByDefault: Boolean? = false,
         @ColumnInfo(name = COL_SOURCE_LANGUAGE) var sourceLanguage: String? = "",
+        @ColumnInfo(name = COL_TARGET_LANGUAGE) var targetLanguage: String? = "",
         @ColumnInfo(name = COL_BOOKMARKED) var bookmarked: Boolean = false,
         @ColumnInfo(name = COL_WORD_COUNT) var wordCount: Int = 0,
         @ColumnInfo(name = COL_WORD_COUNT_FULL) var wordCountFull: Int = 0,
