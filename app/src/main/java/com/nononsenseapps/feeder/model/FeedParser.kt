@@ -230,10 +230,6 @@ class FeedParser(override val di: DI) : DIAware {
         body: ByteArray,
     ): ParsedFeed? {
         var feed = goFeedAdapter.parseBody(body)?.asFeed(url)
-        //feed?.items?.forEach { item ->
-            //item.content_text = "testo tradotto"
-            //item.content_html = "html tradotto"
-        //}
         return feed
     //return goFeedAdapter.parseBody(body)?.asFeed(url)
     }

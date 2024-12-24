@@ -125,14 +125,6 @@ class JsonFeedParser(
         val feed = jsonFeedAdapter.fromJson(json)
             ?: throw IOException("Failed to parse JSONFeed")
 
-        // Scorri la lista e modifica una proprietà di ciascun oggetto
-        //feed.items?.forEach { item ->
-        //    item.translated_title = item.title
-        //    item.translated_content_text = item.content_text
-        //    item.title = "Testo del titolo tradotto"
-         //   item.content_text = "Testo dell'articolo tradotto"
-        //}
-
         return feed
     }
 }
