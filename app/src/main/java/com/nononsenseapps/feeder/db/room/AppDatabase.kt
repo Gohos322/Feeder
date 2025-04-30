@@ -87,15 +87,15 @@ abstract class AppDatabase : RoomDatabase() {
             instance = db
         }
 
-        fun getInstance(context: Context): AppDatabase =
-            instance ?: synchronized(this) {
+        fun getInstance(context: Context): AppDatabase {
+            return instance ?: synchronized(this) {
                 instance ?: buildDatabase(context).also { instance = it }
             }
+        }
 
         private fun buildDatabase(context: Context): AppDatabase {
             val di: DI by closestDI(context)
-            return Room
-                .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .addMigrations(*getAllMigrations(di))
                 .build()
         }
@@ -366,7 +366,7 @@ class MigrationFrom23To24(
         database.execSQL(
             """
             CREATE TABLE IF NOT EXISTS `blocklist`
-                (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                  `glob_pattern` TEXT NOT NULL)
             """.trimIndent(),
         )
@@ -485,13 +485,13 @@ object MIGRATION_19_20 : Migration(19, 20) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL(
             """
-            ALTER TABLE sync_remote 
+            ALTER TABLE sync_remote
               ADD COLUMN device_id INTEGER NOT NULL DEFAULT 0
             """.trimIndent(),
         )
         database.execSQL(
             """
-            ALTER TABLE sync_remote 
+            ALTER TABLE sync_remote
               ADD COLUMN device_name TEXT NOT NULL DEFAULT ''
             """.trimIndent(),
         )

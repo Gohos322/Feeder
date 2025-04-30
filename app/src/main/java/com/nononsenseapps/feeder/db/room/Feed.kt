@@ -18,8 +18,10 @@ import com.nononsenseapps.feeder.db.COL_RESPONSEHASH
 import com.nononsenseapps.feeder.db.COL_RETRY_AFTER
 import com.nononsenseapps.feeder.db.COL_SITE_FETCHED
 import com.nononsenseapps.feeder.db.COL_SKIP_DUPLICATES
+import com.nononsenseapps.feeder.db.COL_SOURCE_LANGUAGE
 import com.nononsenseapps.feeder.db.COL_TAG
 import com.nononsenseapps.feeder.db.COL_TITLE
+import com.nononsenseapps.feeder.db.COL_TRANSLATE_BY_DEFAULT
 import com.nononsenseapps.feeder.db.COL_URL
 import com.nononsenseapps.feeder.db.COL_WHEN_MODIFIED
 import com.nononsenseapps.feeder.db.FEEDS_TABLE_NAME
@@ -59,6 +61,8 @@ data class Feed
         @ColumnInfo(name = COL_SKIP_DUPLICATES) var skipDuplicates: Boolean = false,
         // Time when feed is allowed to be synced again earliest, based on retry-after response header
         @ColumnInfo(name = COL_RETRY_AFTER) var retryAfter: Instant = Instant.EPOCH,
+        @ColumnInfo(name= COL_TRANSLATE_BY_DEFAULT) var translateDefault: Boolean= false,
+        @ColumnInfo(name= COL_SOURCE_LANGUAGE) var sourceLangValue: String= "",
     ) {
         constructor() : this(id = ID_UNSET)
 
