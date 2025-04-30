@@ -44,7 +44,6 @@ class HtmlLinearizer(private var translateByDefault: Boolean? = false, private v
                         } else {
                             linearizeBody(body, baseUrl)
                         }
-//                        linearizeBody(body, baseUrl)
                     }
                     ?: emptyList()
             } catch (e: Exception) {
