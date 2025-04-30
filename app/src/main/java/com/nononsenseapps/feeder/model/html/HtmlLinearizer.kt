@@ -10,7 +10,6 @@ import com.nononsenseapps.feeder.util.asUTF8Sequence
 import com.nononsenseapps.feeder.util.logDebug
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Jsoup
-import org.jsoup.helper.StringUtil
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
