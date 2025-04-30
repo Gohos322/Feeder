@@ -519,11 +519,12 @@ fun ColumnScope.RightContent(
         { viewState.alternateId = it },
         description = stringResource(id = R.string.only_enable_for_bad_id_feeds),
         icon = null,
-    ) { viewState.alternateId = it }
+    )
     //gestione traduzione articolo
     SwitchSetting(
         title = stringResource(id = R.string.translate_article),
         checked = viewState.translateDefault,
+        { viewState.translateDefault = it },
         icon = null,
         modifier =
         Modifier
@@ -531,17 +532,19 @@ fun ColumnScope.RightContent(
             .focusProperties {
                 previous = leftFocusRequester
             },
-    ) { viewState.translateDefault = it }
+    )
     MenuSetting(
         currentValue = viewState.sourceLangValue,
         values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
         title = stringResource(id = R.string.translate_language),
-    ) { viewState.sourceLangValue = it }
+        onSelection = { viewState.sourceLangValue = it }
+    )
     MenuSetting(
         currentValue = viewState.targetLangValue,
         values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
         title = stringResource(id = R.string.translate_from_language),
-    ) { viewState.targetLangValue = it }
+        onSelection = { viewState.targetLangValue = it }
+    )
 
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     GroupTitle(
