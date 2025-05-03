@@ -233,7 +233,7 @@ interface FeedItemDao {
         SELECT $PREVIEW_COLUMNS
         FROM feed_items
         LEFT JOIN feeds ON feed_items.feed_id = feeds.id
-        WHERE tag IS :tag 
+        WHERE tag IS :tag
           AND (read_time is null or read_time >= :minReadTime)
           AND bookmarked in (1, :bookmarked)
           AND block_time is null
@@ -503,6 +503,13 @@ interface FeedItemDao {
         plainTitle: String,
         link: String?,
     ): Boolean
+
+    @Query("""
+            UPDATE feed_items
+            SET translated_text = :translatedText
+            WHERE id = :id
+        """)
+    suspend fun updateTranslatedText(id: Long, translatedText: String)
 
     companion object {
         // These are backed by a database index

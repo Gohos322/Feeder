@@ -4,7 +4,7 @@
 kotlin = "2.1.10"
 ksp = "2.1.10-1.0.31"
 kotlinxSerialization = "1.8.0"
-androidPlugin = "8.8.2"
+androidPlugin = "8.9.2"
 # BEGIN These should be upgraded in unison
 okhttp = "4.12.0"
 okio = "3.6.0"
@@ -49,6 +49,7 @@ mockk = "1.14.0"
 androidx-test-junit-ktx = "1.2.1"
 emoji2 = "1.5.0"
 icu4j = "77.1"
+common = "18.11.0"
 
 [libraries]
 retrofit-bom = { module = "com.squareup.retrofit2:retrofit-bom", version.ref = "retrofit" }
@@ -130,6 +131,7 @@ espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref =
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-test-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-junit-ktx" }
+common = { group = "com.google.mlkit", name = "common", version.ref = "common" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidPlugin" }

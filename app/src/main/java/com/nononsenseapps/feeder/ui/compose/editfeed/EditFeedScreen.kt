@@ -81,7 +81,6 @@ import com.nononsenseapps.feeder.ui.compose.theme.FeederTheme
 import com.nononsenseapps.feeder.ui.compose.theme.LocalDimens
 import com.nononsenseapps.feeder.ui.compose.theme.PreviewTheme
 import com.nononsenseapps.feeder.ui.compose.theme.SensibleTopAppBar
-import com.nononsenseapps.feeder.ui.compose.theme.SetStatusBarColorToMatchScrollableTopAppBar
 import com.nononsenseapps.feeder.ui.compose.utils.ImmutableHolder
 import com.nononsenseapps.feeder.ui.compose.utils.LocalWindowSizeMetrics
 import com.nononsenseapps.feeder.ui.compose.utils.ScreenType
@@ -205,8 +204,6 @@ fun EditFeedScreen(
         }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    SetStatusBarColorToMatchScrollableTopAppBar(scrollBehavior)
 
     Scaffold(
         modifier =
@@ -540,13 +537,13 @@ fun ColumnScope.RightContent(
     MenuSetting(
         currentValue = viewState.sourceLangValue,
         values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
-        title = stringResource(id = R.string.translate_language),
+        title = stringResource(id = R.string.translate_from_language),
         onSelection = { viewState.sourceLangValue = it }
     )
     MenuSetting(
         currentValue = viewState.targetLangValue,
         values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
-        title = stringResource(id = R.string.translate_from_language),
+        title = stringResource(id = R.string.translate_language),
         onSelection = { viewState.targetLangValue = it }
     )
 

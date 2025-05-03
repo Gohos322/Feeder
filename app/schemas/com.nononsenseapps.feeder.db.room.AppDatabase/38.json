@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 38,
-    "identityHash": "00763bc5e62c2bcbe766a41ac246cd7f",
+    "identityHash": "5bed172e4ef3ddac97ff4de7b344fc54",
     "entities": [
       {
         "tableName": "feeds",
@@ -161,7 +161,7 @@
       },
       {
         "tableName": "feed_items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `guid` TEXT NOT NULL, `title` TEXT NOT NULL, `plain_title` TEXT NOT NULL, `plain_snippet` TEXT NOT NULL, `image_url` TEXT, `image_from_body` INTEGER NOT NULL, `enclosure_link` TEXT, `enclosure_type` TEXT, `author` TEXT, `pub_date` TEXT, `link` TEXT, `unread` INTEGER NOT NULL, `notified` INTEGER NOT NULL, `feed_id` INTEGER, `first_synced_time` INTEGER NOT NULL, `primary_sort_time` INTEGER NOT NULL, `pinned` INTEGER NOT NULL, `bookmarked` INTEGER NOT NULL, `fulltext_downloaded` INTEGER NOT NULL, `read_time` INTEGER, `word_count` INTEGER NOT NULL, `word_count_full` INTEGER NOT NULL, `block_time` INTEGER, FOREIGN KEY(`feed_id`) REFERENCES `feeds`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `guid` TEXT NOT NULL, `title` TEXT NOT NULL, `plain_title` TEXT NOT NULL, `plain_snippet` TEXT NOT NULL, `image_url` TEXT, `image_from_body` INTEGER NOT NULL, `enclosure_link` TEXT, `enclosure_type` TEXT, `author` TEXT, `pub_date` TEXT, `link` TEXT, `unread` INTEGER NOT NULL, `notified` INTEGER NOT NULL, `feed_id` INTEGER, `first_synced_time` INTEGER NOT NULL, `primary_sort_time` INTEGER NOT NULL, `pinned` INTEGER NOT NULL, `bookmarked` INTEGER NOT NULL, `fulltext_downloaded` INTEGER NOT NULL, `read_time` INTEGER, `word_count` INTEGER NOT NULL, `word_count_full` INTEGER NOT NULL, `block_time` INTEGER, `translated_text` TEXT, FOREIGN KEY(`feed_id`) REFERENCES `feeds`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -305,6 +305,12 @@
             "fieldPath": "blockTime",
             "columnName": "block_time",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "translatedText",
+            "columnName": "translated_text",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -799,7 +805,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '00763bc5e62c2bcbe766a41ac246cd7f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5bed172e4ef3ddac97ff4de7b344fc54')"
     ]
   }
 }

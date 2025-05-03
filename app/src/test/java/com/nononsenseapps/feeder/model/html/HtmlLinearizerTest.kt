@@ -1,7 +1,27 @@
 package com.nononsenseapps.feeder.model.html
 
+import androidx.lifecycle.viewModelScope
+import com.nononsenseapps.feeder.archmodel.Article
+import com.nononsenseapps.feeder.archmodel.Enclosure
+import com.nononsenseapps.feeder.archmodel.LinkOpener
+import com.nononsenseapps.feeder.archmodel.OpenAISettings
+import com.nononsenseapps.feeder.archmodel.TextToDisplay
+import com.nononsenseapps.feeder.db.room.ID_UNSET
+import com.nononsenseapps.feeder.model.PlaybackStatus
+import com.nononsenseapps.feeder.model.ThumbnailImage
+import com.nononsenseapps.feeder.openai.isValid
+import com.nononsenseapps.feeder.ui.compose.feedarticle.ArticleItemKeyHolder
+import com.nononsenseapps.feeder.ui.compose.feedarticle.ArticleScreenViewState
+import com.nononsenseapps.feeder.ui.compose.feedarticle.OpenAISummaryState
+import com.nononsenseapps.feeder.ui.compose.feedarticle.RotatingArticleItemKeyHolder
 import com.nononsenseapps.feeder.ui.compose.html.toTableData
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import org.junit.Before
+import java.time.ZonedDateTime
+import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -12,7 +32,7 @@ class HtmlLinearizerTest {
 
     @Before
     fun setUp() {
-        linearizer = HtmlLinearizer(viewState.value.translateByDefault)
+        linearizer = HtmlLinearizer(false, "IT", "IT")
     }
 
     @Test
@@ -1659,4 +1679,33 @@ class HtmlLinearizerTest {
             linearText.text,
         )
     }
+
 }
+private data class ArticleState(
+    override val useDetectLanguage: Boolean = false,
+    override val isBottomBarVisible: Boolean = false,
+    override val isTTSPlaying: Boolean = false,
+    override val ttsLanguages: List<Locale> = emptyList(),
+    override val articleFeedUrl: String? = null,
+    override val articleId: Long = ID_UNSET,
+    override val articleLink: String? = null,
+    override val articleFeedId: Long = ID_UNSET,
+    override val textToDisplay: TextToDisplay = TextToDisplay.CONTENT,
+    override val linkOpener: LinkOpener = LinkOpener.CUSTOM_TAB,
+    override val pubDate: ZonedDateTime? = null,
+    override val author: String? = null,
+    override val enclosure: Enclosure = Enclosure(),
+    override val articleTitle: String = "",
+    override val showToolbarMenu: Boolean = false,
+    override val feedDisplayTitle: String = "",
+    override val isBookmarked: Boolean = false,
+    override val keyHolder: ArticleItemKeyHolder = RotatingArticleItemKeyHolder,
+    override val wordCount: Int = 0,
+    override val image: ThumbnailImage? = null,
+    override val showSummarize: Boolean = false,
+    override val openAiSummary: OpenAISummaryState = OpenAISummaryState.Empty,
+    override val articleContent: LinearArticle = LinearArticle(emptyList()),
+    override val translateByDefault: Boolean? = false,
+    override val sourceLanguage: String? = "",
+    override val targetLanguage: String? = ""
+) : ArticleScreenViewState

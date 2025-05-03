@@ -211,7 +211,20 @@ fun ArticleScreen(
                             )
                         }
                     }
-
+                    // New IconButton for Original Article
+                   PlainTooltipBox(tooltip = { Text(stringResource(R.string.original_article)) }) {
+                           IconButton(
+                                   onClick = {
+                                           // Add your logic for the icon button here
+                                       },
+                                   modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                                       ) {
+                                   Icon(
+                                           Icons.Default.AutoFixHigh, // Choose an icon or replace with a suitable one
+                                           contentDescription = "Original Article"
+                                               )
+                               }
+                       }
                     PlainTooltipBox(tooltip = { Text(stringResource(id = R.string.open_in_web_view)) }) {
                         IconButton(
                             onClick = onOpenInCustomTab,

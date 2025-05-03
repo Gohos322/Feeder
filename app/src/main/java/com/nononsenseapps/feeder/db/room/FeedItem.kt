@@ -26,6 +26,7 @@ import com.nononsenseapps.feeder.db.COL_PRIMARYSORTTIME
 import com.nononsenseapps.feeder.db.COL_PUBDATE
 import com.nononsenseapps.feeder.db.COL_READ_TIME
 import com.nononsenseapps.feeder.db.COL_TITLE
+import com.nononsenseapps.feeder.db.COL_TRANSLATED_TEXT
 import com.nononsenseapps.feeder.db.COL_WORD_COUNT
 import com.nononsenseapps.feeder.db.COL_WORD_COUNT_FULL
 import com.nononsenseapps.feeder.db.FEED_ITEMS_TABLE_NAME
@@ -119,6 +120,7 @@ data class FeedItem
         @ColumnInfo(name = COL_WORD_COUNT) var wordCount: Int = 0,
         @ColumnInfo(name = COL_WORD_COUNT_FULL) var wordCountFull: Int = 0,
         @ColumnInfo(name = COL_BLOCK_TIME) var blockTime: Instant? = null,
+        @ColumnInfo(name = COL_TRANSLATED_TEXT) var translatedText: String? = null
     ) : FeedItemForFetching,
         FeedItemCursor {
         constructor() : this(id = ID_UNSET)
