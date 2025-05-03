@@ -133,6 +133,7 @@ class ArticleViewModel(
             val article = params[0] as Article?
             val textToDisplay = params[1] as TextToDisplay
             val articleContent = params[2] as LinearArticle
+            val translatedArticleContent = params[2] as LinearArticle
             val toolbarVisible = params[3] as Boolean
             val linkOpener = params[4] as LinkOpener
             val useDetectLanguage = params[5] as Boolean
@@ -165,6 +166,7 @@ class ArticleViewModel(
                 translateByDefault = article?.item?.translateByDefault,
                 sourceLanguage = article?.item?.sourceLanguage,
                 targetLanguage = article?.item?.targetLanguage,
+                translatedArticleContent = translatedArticleContent,
                 wordCount =
                     if (isFullText) {
                         article?.wordCountFull ?: 0
@@ -464,7 +466,8 @@ private data class ArticleState(
     override val articleContent: LinearArticle = LinearArticle(emptyList()),
     override val translateByDefault: Boolean? = false,
     override val sourceLanguage: String? = "",
-    override val targetLanguage: String? = ""
+    override val targetLanguage: String? = "",
+    override val translatedArticleContent: LinearArticle = LinearArticle(emptyList()),
 ) : ArticleScreenViewState
 
 @Immutable
@@ -495,6 +498,7 @@ interface ArticleScreenViewState {
     val translateByDefault: Boolean?
     val sourceLanguage: String?
     val targetLanguage: String?
+    val translatedArticleContent: LinearArticle
 }
 
 sealed interface OpenAISummaryState {

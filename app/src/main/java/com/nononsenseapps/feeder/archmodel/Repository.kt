@@ -894,6 +894,7 @@ data class Article(
     val translateByDefault: Boolean = item?.translateByDefault ?: false
     val sourceLanguage: String = item?.sourceLanguage!!
     val targetLanguage: String = item?.targetLanguage!!
+    val translatedText: String? = item?.translatedText
     val wordCount: Int = item?.wordCount ?: 0
     val wordCountFull: Int = item?.wordCountFull ?: 0
     val image: ThumbnailImage? = item?.thumbnailImage

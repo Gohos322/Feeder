@@ -76,6 +76,7 @@ import org.kodein.di.compose.LocalDI
 import org.kodein.di.instance
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import androidx.compose.runtime.mutableStateOf
 
 @Composable
 fun ArticleScreen(
@@ -172,6 +173,7 @@ fun ArticleScreen(
 
     val focusArticle = remember { FocusRequester() }
     val focusTopBar = remember { FocusRequester() }
+    val isTranslated = remember { mutableStateOf(false) }
 
     val closeMenuText = stringResource(id = R.string.close_menu)
 
@@ -215,13 +217,13 @@ fun ArticleScreen(
                    PlainTooltipBox(tooltip = { Text(stringResource(R.string.original_article)) }) {
                            IconButton(
                                    onClick = {
-                                           // Add your logic for the icon button here
+                                       isTranslated.value = !isTranslated.value
                                        },
                                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
                                        ) {
                                    Icon(
                                            Icons.Default.AutoFixHigh, // Choose an icon or replace with a suitable one
-                                           contentDescription = "Original Article"
+                                           contentDescription = "Switch"
                                                )
                                }
                        }
@@ -393,6 +395,7 @@ fun ArticleScreen(
                         .focusProperties {
                             up = focusTopBar
                         },
+                isTranslated = isTranslated.value
             )
         }
     }
@@ -405,6 +408,7 @@ fun ArticleContent(
     onFeedTitleClick: () -> Unit,
     articleListState: LazyListState,
     modifier: Modifier = Modifier,
+    isTranslated: Boolean,
 ) {
     val toolbarColor = MaterialTheme.colorScheme.surface.toArgb()
 
@@ -461,7 +465,7 @@ fun ArticleContent(
             when (viewState.textToDisplay) {
                 TextToDisplay.CONTENT -> {
                     linearArticleContent(
-                        articleContent = viewState.articleContent,
+                        articleContent = if (isTranslated) viewState.translatedArticleContent else viewState.articleContent,
                         onLinkClick = { link, index ->
                             if (index != null) {
                                 coroutineScope.launch {
