@@ -505,6 +505,13 @@ interface FeedItemDao {
     @Query("SELECT id FROM feed_items")
     suspend fun getAllFeedItemIds(): List<Long>
 
+    @Query("""
+            UPDATE feed_items
+            SET translated_text = :translatedText
+            WHERE id = :id
+        """)
+    suspend fun updateTranslatedText(id: Long, translatedText: String)
+
     companion object {
         // These are backed by a database index
         const val FEED_ITEM_LIST_SORT_ORDER_DESC =

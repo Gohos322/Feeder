@@ -17,6 +17,7 @@ import com.nononsenseapps.feeder.blob.blobFile
 import com.nononsenseapps.feeder.blob.blobFullFile
 import com.nononsenseapps.feeder.blob.blobFullInputStream
 import com.nononsenseapps.feeder.blob.blobInputStream
+import com.nononsenseapps.feeder.db.room.FeedItemDao
 import com.nononsenseapps.feeder.db.room.FeedItemForFetching
 import com.nononsenseapps.feeder.db.room.ID_UNSET
 import com.nononsenseapps.feeder.model.FeedParserError
@@ -64,6 +65,7 @@ class ArticleViewModel(
     private val fullTextParser: FullTextParser by instance()
     private val filePathProvider: FilePathProvider by instance()
     private val openAIApi: OpenAIApi by instance()
+    private val feedItemDao: FeedItemDao by instance()
 
     // Use this for actions which should complete even if app goes off screen
     private val applicationCoroutineScope: ApplicationCoroutineScope by instance()
@@ -187,7 +189,7 @@ class ArticleViewModel(
         logDebug(LOG_TAG, "parseArticleContent(${article.id}, $fullText)")
         return try {
             withContext(Dispatchers.IO) {
-                val htmlLinearizer = HtmlLinearizer(viewState.value.translateByDefault, viewState.value.sourceLanguage, viewState.value.targetLanguage)
+                val htmlLinearizer = HtmlLinearizer(viewState.value.translateByDefault, viewState.value.sourceLanguage, viewState.value.targetLanguage, feedItemDao)
                 when (fullText) {
                     false -> {
                         if (blobFile(article.id, filePathProvider.articleDir).isFile) {
@@ -197,6 +199,7 @@ class ArticleViewModel(
                                         htmlLinearizer.linearize(
                                             inputStream = it,
                                             baseUrl = article.feedUrl ?: "",
+                                            article.id,
                                         )
                                     }.also {
                                         textToDisplay.update { TextToDisplay.CONTENT }
@@ -224,6 +227,7 @@ class ArticleViewModel(
                                     "for updates on this issue<br/><br/>" +
                                     article.snippet,
                                 article.feedUrl ?: "",
+                                article.id,
                             )
                         }
                     }
@@ -252,6 +256,7 @@ class ArticleViewModel(
                                         htmlLinearizer.linearize(
                                             inputStream = it,
                                             baseUrl = article.feedUrl ?: "",
+                                            article.id,
                                         )
                                     }.also {
                                         textToDisplay.update { TextToDisplay.CONTENT }

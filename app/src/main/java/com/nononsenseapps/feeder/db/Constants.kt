@@ -56,6 +56,7 @@ const val COL_RETRY_AFTER = "retry_after"
 const val COL_TRANSLATE_BY_DEFAULT = "translate_by_default"
 const val COL_SOURCE_LANGUAGE = "source_language"
 const val COL_TARGET_LANGUAGE = "target_language"
+const val COL_TRANSLATED_TEXT = "translated_text"
 
 
 // year 5000

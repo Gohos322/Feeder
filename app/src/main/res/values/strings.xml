@@ -277,6 +277,7 @@
   <string name="translate_article">Translate Article</string>
   <string name="translate_language">Translate to language</string>
   <string name="translate_from_language">Translate from language</string>
+  <string name="original_article">Visualize the original untranslated text of the article</string>
 
   <string name="unable_to_load_models">Unable to load models.</string>
   <string name="no_models_were_found">No models were found</string>

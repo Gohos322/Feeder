@@ -536,13 +536,13 @@ fun ColumnScope.RightContent(
     MenuSetting(
         currentValue = viewState.sourceLangValue,
         values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
-        title = stringResource(id = R.string.translate_language),
+        title = stringResource(id = R.string.translate_from_language),
         onSelection = { viewState.sourceLangValue = it }
     )
     MenuSetting(
         currentValue = viewState.targetLangValue,
         values = immutableListHolderOf(TranslateLanguage.getAllLanguages()),
-        title = stringResource(id = R.string.translate_from_language),
+        title = stringResource(id = R.string.translate_language),
         onSelection = { viewState.targetLangValue = it }
     )
 

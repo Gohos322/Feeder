@@ -2,6 +2,7 @@ package com.nononsenseapps.feeder.model.html
 
 import HtmlTranslator
 import android.util.Log
+import com.nononsenseapps.feeder.db.room.FeedItemDao
 import com.nononsenseapps.feeder.ui.compose.text.ancestors
 import com.nononsenseapps.feeder.ui.compose.text.attrInHierarchy
 import com.nononsenseapps.feeder.ui.compose.text.stripHtml
@@ -19,7 +20,7 @@ import java.net.URL
 
 typealias IdHolder = (String) -> Unit
 
-class HtmlLinearizer(private var translateByDefault: Boolean? = false, private var sourceLanguage: String?, private var targetLanguage: String?) {
+class HtmlLinearizer(private var translateByDefault: Boolean? = false, private var sourceLanguage: String?, private var targetLanguage: String?, private val feedItemDao: FeedItemDao,) {
     private var linearTextBuilder: LinearTextBuilder = LinearTextBuilder(translateByDefault)
     private var idHolder: IdHolder = {
         linearTextBuilder.pushId(it)
@@ -28,11 +29,13 @@ class HtmlLinearizer(private var translateByDefault: Boolean? = false, private v
     fun linearize(
         html: String,
         baseUrl: String,
-    ) = html.byteInputStream().use { linearize(it, baseUrl) }
+        articleId: Long,
+    ) = html.byteInputStream().use { linearize(it, baseUrl, articleId) }
 
     fun linearize(
         inputStream: InputStream,
         baseUrl: String,
+        articleId: Long,
     ): LinearArticle =
         LinearArticle(
             elements =
@@ -44,6 +47,9 @@ class HtmlLinearizer(private var translateByDefault: Boolean? = false, private v
                             val htmlTranslator = HtmlTranslator()
                             val translatedText = runBlocking {
                                 htmlTranslator.translateHtml(body.html(), sourceLanguage, targetLanguage)
+                            }
+                            runBlocking {
+                                feedItemDao.updateTranslatedText(articleId, translatedText)
                             }
                             linearizeBody(Jsoup.parse(translatedText).body(), baseUrl)
                         } else {
