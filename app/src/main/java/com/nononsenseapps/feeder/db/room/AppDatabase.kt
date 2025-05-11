@@ -157,7 +157,7 @@ class MigrationFrom37To38(override val di: DI) : Migration(37, 38), DIAware {
     }
 }
 
-class MigrationFrom36To37(override val di: DI) : Migration(36, 37), DIAware {
+/*class MigrationFrom36To37(override val di: DI) : Migration(36, 37), DIAware {
     override fun migrate(database: SupportSQLiteDatabase) {
         // TODO add column retry_after to feeds, default epoch, not null
         database.execSQL(
@@ -171,7 +171,7 @@ class MigrationFrom36To37(override val di: DI) : Migration(36, 37), DIAware {
             """.trimIndent(),
         )
     }
-}
+}*/
 
 class MigrationFrom38To39(override val di: DI) : Migration(38, 39), DIAware {
     override fun migrate(database: SupportSQLiteDatabase) {
@@ -200,6 +200,17 @@ class MigrationFrom36To37(
     private val filePathProvider: FilePathProvider by instance()
 
     override fun migrate(database: SupportSQLiteDatabase) {
+
+        database.execSQL(
+            """
+            ALTER TABLE feeds ADD COLUMN translate_by_default INTEGER NOT NULL DEFAULT 0
+            """.trimIndent(),
+        )
+        database.execSQL(
+            """
+            ALTER TABLE feeds ADD COLUMN source_language TEXT NOT NULL DEFAULT ''
+            """.trimIndent(),
+        )
         Log.i(LOG_TAG, "Starting migration of article files from oldArticleDir to articleDir")
 
         try {
