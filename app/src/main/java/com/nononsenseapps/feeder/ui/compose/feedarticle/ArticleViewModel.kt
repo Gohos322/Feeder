@@ -133,6 +133,7 @@ class ArticleViewModel(
             val textToDisplay = params[1] as TextToDisplay
             val articleContent = params[2] as LinearArticle
             val translatedArticleContent = params[2] as LinearArticle
+            //val translatedArticleContent = parseArticleContent(article!!, false)
             val toolbarVisible = params[3] as Boolean
             val linkOpener = params[4] as LinkOpener
             val useDetectLanguage = params[5] as Boolean
