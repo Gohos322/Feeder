@@ -44,6 +44,11 @@ class EditFeedScreenViewModel(
     override var feedTitle: String by mutableSavedStateOf(state, "")
     override var feedTag: String by mutableSavedStateOf(state, "")
     override var fullTextByDefault: Boolean by mutableSavedStateOf(state, false)
+
+    //aggiunta per traduzione
+    override var translateDefault: Boolean by mutableSavedStateOf(state, false)
+    override var sourceLangValue: String by mutableStateOf("en")
+
     override var skipDuplicates: Boolean by mutableSavedStateOf(state, false)
     override var notify: Boolean by mutableSavedStateOf(state, false)
     override var articleOpener: String by mutableSavedStateOf(state, "")
@@ -111,6 +116,14 @@ class EditFeedScreenViewModel(
                 alternateId = feed.alternateId
             }
 
+            if (!state.contains("translateDefault")) {
+                translateDefault = feed.translateDefault
+            }
+
+            if (!state.contains("sourceLangValue")) {
+                sourceLangValue = feed.sourceLangValue
+            }
+
             repository.allTags
                 .collect { value ->
                     allTags = value
@@ -135,6 +148,8 @@ class EditFeedScreenViewModel(
                     skipDuplicates = skipDuplicates,
                     openArticlesWith = articleOpener,
                     alternateId = alternateId,
+                    translateDefault = translateDefault,
+                    sourceLangValue = sourceLangValue,
                 )
 
             // No point in doing anything unless they actually differ

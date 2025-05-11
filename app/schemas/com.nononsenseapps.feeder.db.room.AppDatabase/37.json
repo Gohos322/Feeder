@@ -108,6 +108,18 @@
             "columnName": "retry_after",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "translateDefault",
+            "columnName": "translate_by_default",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceLangValue",
+            "columnName": "source_language",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
