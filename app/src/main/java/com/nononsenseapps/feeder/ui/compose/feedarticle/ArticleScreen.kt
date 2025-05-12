@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +41,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -76,6 +80,14 @@ import org.kodein.di.compose.LocalDI
 import org.kodein.di.instance
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import com.nononsenseapps.feeder.translation.TranslationManager
+import com.nononsenseapps.feeder.translation.downloadModelIfNeededSuspend
+import com.nononsenseapps.feeder.translation.translateTextSuspend
+import com.nononsenseapps.feeder.translation.toPlainText
+// For translation display
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.fillMaxSize
 
 @Composable
 fun ArticleScreen(
@@ -172,8 +184,35 @@ fun ArticleScreen(
 
     val focusArticle = remember { FocusRequester() }
     val focusTopBar = remember { FocusRequester() }
+    // Translation toggle state
+    var showingTranslated by rememberSaveable { mutableStateOf(false) }
+    // Translation content state
+    var translationLoading by remember { mutableStateOf(false) }
+    var translatedText by remember { mutableStateOf<String?>(null) }
 
     val closeMenuText = stringResource(id = R.string.close_menu)
+    // Trigger translation when toggled
+    LaunchedEffect(showingTranslated) {
+        if (showingTranslated) {
+            translationLoading = true
+            try {
+                val translator = TranslationManager.getTranslator(
+                    viewState.translationSourceLanguage,
+                    viewState.translationTargetLanguage
+                )
+                // download model if needed
+                translator.downloadModelIfNeededSuspend()
+                // prepare plain text and translate
+                val plain = viewState.articleContent.toPlainText()
+                translatedText = translator.translateTextSuspend(plain)
+            } catch (e: Exception) {
+                // on error, show message
+                translatedText = e.localizedMessage ?: e.toString()
+            } finally {
+                translationLoading = false
+            }
+        }
+    }
 
     Scaffold(
         modifier =
@@ -222,7 +261,20 @@ fun ArticleScreen(
                             )
                         }
                     }
-
+                    // Translation toggle button
+                    if (viewState.translationEnabled) {
+                        PlainTooltipBox(tooltip = { Text(stringResource(id = R.string.translate_articles)) }) {
+                            IconButton(onClick = { showingTranslated = !showingTranslated }) {
+                                Icon(
+                                    Icons.Default.Translate,
+                                    contentDescription = stringResource(
+                                        if (showingTranslated) R.string.original else R.string.translated
+                                    ),
+                                )
+                            }
+                        }
+                    }
+                    
                     PlainTooltipBox(tooltip = { Text(stringResource(id = R.string.open_menu)) }) {
                         Box {
                             IconButton(
@@ -362,25 +414,46 @@ fun ArticleScreen(
             )
         },
     ) { padding ->
-        // Box handles the dynamic padding so ArticleContent don't have to recompose on scroll
+        // Box handles the dynamic padding so ArticleContent or translated text can scroll independently
         Box(
-            modifier =
-                Modifier
-                    .padding(padding),
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
         ) {
-            ArticleContent(
-                viewState = viewState,
-                screenType = ScreenType.SINGLE,
-                articleListState = articleListState,
-                onFeedTitleClick = onFeedTitleClick,
-                modifier =
-                    Modifier
+            if (showingTranslated) {
+                if (translationLoading) {
+                    // show loading indicator for translation
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    // display translated text
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = translatedText.orEmpty(),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            } else {
+                ArticleContent(
+                    viewState = viewState,
+                    screenType = ScreenType.SINGLE,
+                    articleListState = articleListState,
+                    onFeedTitleClick = onFeedTitleClick,
+                    modifier = Modifier
                         .focusGroup()
                         .focusRequester(focusArticle)
                         .focusProperties {
                             up = focusTopBar
                         },
-            )
+                )
+            }
         }
     }
 }

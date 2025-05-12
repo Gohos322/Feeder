@@ -18,6 +18,7 @@ import com.nononsenseapps.feeder.blob.blobFullFile
 import com.nononsenseapps.feeder.blob.blobFullInputStream
 import com.nononsenseapps.feeder.blob.blobInputStream
 import com.nononsenseapps.feeder.db.room.FeedItemForFetching
+import com.nononsenseapps.feeder.db.room.Feed
 import com.nononsenseapps.feeder.db.room.ID_UNSET
 import com.nononsenseapps.feeder.model.FeedParserError
 import com.nononsenseapps.feeder.model.FullTextParser
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -114,6 +116,10 @@ class ArticleViewModel(
         MutableStateFlow(state["toolbarMenuVisible"] ?: false)
 
     private val openAiSummary: MutableStateFlow<OpenAISummaryState> = MutableStateFlow(OpenAISummaryState.Empty)
+    // Feed preferences flow to retrieve translation settings per feed
+    private val feedPrefsFlow = articleFlow
+        .filterNotNull()
+        .mapLatest { article -> repository.getFeed(article.feedId) ?: Feed() }
 
     val viewState: StateFlow<ArticleScreenViewState> =
         combine(
@@ -121,6 +127,7 @@ class ArticleViewModel(
             textToDisplay,
             articleContentFlow,
             toolbarVisible,
+            feedPrefsFlow,
             repository.linkOpener,
             repository.useDetectLanguage,
             ttsStateHolder.ttsState,
@@ -128,19 +135,22 @@ class ArticleViewModel(
             repository.openAISettings,
             openAiSummary,
         ) { params ->
+            // Unpack combined flows
             val article = params[0] as Article?
             val textToDisplay = params[1] as TextToDisplay
             val articleContent = params[2] as LinearArticle
             val toolbarVisible = params[3] as Boolean
-            val linkOpener = params[4] as LinkOpener
-            val useDetectLanguage = params[5] as Boolean
-            val ttsState = params[6] as PlaybackStatus
-
+            val feed = params[4] as Feed
+            val linkOpener = params[5] as LinkOpener
+            val useDetectLanguage = params[6] as Boolean
+            val ttsState = params[7] as PlaybackStatus
             @Suppress("UNCHECKED_CAST")
-            val ttsLanguages = params[7] as List<Locale>
+            val ttsLanguages = params[8] as List<Locale>
+            val openAISettings = params[9] as OpenAISettings
+            val openAiSummaryState = params[10] as OpenAISummaryState
 
-            val showSummarize = (params[8] as OpenAISettings).isValid && !article?.link.isNullOrEmpty()
-            val openAiSummary = (params[9] as OpenAISummaryState)
+            // Determine if summarization should be shown
+            val showSummarize = openAISettings.isValid && !article?.link.isNullOrEmpty()
 
             ArticleState(
                 useDetectLanguage = useDetectLanguage,
@@ -160,15 +170,14 @@ class ArticleViewModel(
                 showToolbarMenu = toolbarVisible,
                 feedDisplayTitle = article?.feedDisplayTitle ?: "",
                 isBookmarked = article?.bookmarked == true,
-                wordCount =
-                    if (isFullText) {
-                        article?.wordCountFull ?: 0
-                    } else {
-                        article?.wordCount ?: 0
-                    },
+                wordCount = if (isFullText) article?.wordCountFull ?: 0 else article?.wordCount ?: 0,
                 image = article?.image,
                 showSummarize = showSummarize,
-                openAiSummary = openAiSummary,
+                openAiSummary = openAiSummaryState,
+                // Translation settings
+                translationEnabled = feed.translateEnabled,
+                translationSourceLanguage = feed.translationSourceLanguage,
+                translationTargetLanguage = feed.translationTargetLanguage,
                 articleContent = articleContent,
             )
         }.stateIn(
@@ -453,6 +462,10 @@ private data class ArticleState(
     override val image: ThumbnailImage? = null,
     override val showSummarize: Boolean = false,
     override val openAiSummary: OpenAISummaryState = OpenAISummaryState.Empty,
+    // Translation settings
+    override val translationEnabled: Boolean = false,
+    override val translationSourceLanguage: String? = null,
+    override val translationTargetLanguage: String? = null,
     override val articleContent: LinearArticle = LinearArticle(emptyList()),
 ) : ArticleScreenViewState
 
@@ -480,6 +493,10 @@ interface ArticleScreenViewState {
     val image: ThumbnailImage?
     val showSummarize: Boolean
     val openAiSummary: OpenAISummaryState
+    // Translation settings
+    val translationEnabled: Boolean
+    val translationSourceLanguage: String?
+    val translationTargetLanguage: String?
     val articleContent: LinearArticle
 }
 

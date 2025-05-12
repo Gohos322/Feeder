@@ -517,6 +517,31 @@ fun ColumnScope.RightContent(
         description = stringResource(id = R.string.only_enable_for_bad_id_feeds),
         icon = null,
     )
+    // Translation settings per feed
+    SwitchSetting(
+        title = stringResource(id = R.string.translate_articles),
+        checked = viewState.translateEnabled,
+        { viewState.translateEnabled = it },
+        icon = null,
+    )
+    AnimatedVisibility(visible = viewState.translateEnabled) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = viewState.translationSourceLanguage ?: "",
+                onValueChange = { viewState.translationSourceLanguage = it },
+                label = { Text(stringResource(id = R.string.source_language)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = viewState.translationTargetLanguage ?: "",
+                onValueChange = { viewState.translationTargetLanguage = it },
+                label = { Text(stringResource(id = R.string.target_language)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     GroupTitle(
         startingSpace = false,
@@ -572,6 +597,10 @@ interface EditFeedScreenState {
     var skipDuplicates: Boolean
     var articleOpener: String
     var alternateId: Boolean
+    // Translation settings
+    var translateEnabled: Boolean
+    var translationSourceLanguage: String?
+    var translationTargetLanguage: String?
     val isOkToSave: Boolean
     val isNotValidUrl: Boolean
     val isOpenItemWithBrowser: Boolean
@@ -604,6 +633,10 @@ private class ScreenState(
     override var skipDuplicates: Boolean by mutableStateOf(false)
     override var articleOpener: String by mutableStateOf("")
     override var alternateId: Boolean by mutableStateOf(false)
+    // Translation settings per feed
+    override var translateEnabled: Boolean by mutableStateOf(false)
+    override var translationSourceLanguage: String? by mutableStateOf(null)
+    override var translationTargetLanguage: String? by mutableStateOf(null)
 }
 
 @Preview("Edit Feed Phone")

@@ -54,7 +54,7 @@ private const val LOG_TAG = "FEEDER_APPDB"
     views = [
         FeedsWithItemsForNavDrawer::class,
     ],
-    version = 37,
+    version = 38,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -96,12 +96,22 @@ abstract class AppDatabase : RoomDatabase() {
             return Room
                 .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .addMigrations(*getAllMigrations(di))
+                // Allow destructive migration on database version downgrade
+                .fallbackToDestructiveMigrationOnDowngrade()
                 .build()
         }
     }
 }
 
 // 17-20 were never part of any release, just made for easier testing
+// Migration to add per-feed translation settings (37 -> 38)
+private val MIGRATION_37_38: Migration = object : Migration(37, 38) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE feeds ADD COLUMN translate_enabled INTEGER NOT NULL DEFAULT 0")
+        database.execSQL("ALTER TABLE feeds ADD COLUMN translation_source_language TEXT")
+        database.execSQL("ALTER TABLE feeds ADD COLUMN translation_target_language TEXT")
+    }
+}
 fun getAllMigrations(di: DI) =
     arrayOf(
         MIGRATION_5_7,
@@ -136,6 +146,7 @@ fun getAllMigrations(di: DI) =
         MigrationFrom34To35(di),
         MigrationFrom35To36(di),
         MigrationFrom36To37(di),
+        MIGRATION_37_38,
     )
 
 /*
