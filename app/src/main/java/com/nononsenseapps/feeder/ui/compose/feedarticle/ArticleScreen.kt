@@ -86,6 +86,8 @@ import com.nononsenseapps.feeder.translation.translateTextSuspend
 import com.nononsenseapps.feeder.translation.toPlainText
 // For translation display
 import androidx.compose.foundation.rememberScrollState
+import com.nononsenseapps.feeder.model.html.LinearArticle
+import com.nononsenseapps.feeder.model.html.LinearText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.fillMaxSize
 
@@ -427,18 +429,33 @@ fun ArticleScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
-                    // display translated text
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp)
-                    ) {
-                        Text(
-                            text = translatedText.orEmpty(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                    // display translated content with preserved formatting
+                    val translatedArticle = remember(translatedText, viewState.articleContent) {
+                        val original = viewState.articleContent
+                        val paragraphs = translatedText.orEmpty().split("\n")
+                        var idx = 0
+                        val newElements = original.elements.map { element ->
+                            if (element is LinearText) {
+                                val newText = if (idx < paragraphs.size) paragraphs[idx++] else ""
+                                element.copy(text = newText)
+                            } else element
+                        }
+                        LinearArticle(newElements)
                     }
+                    // render translated article using same layout
+                    ArticleContent(
+                        viewState = viewState,
+                        screenType = ScreenType.SINGLE,
+                        articleListState = articleListState,
+                        onFeedTitleClick = onFeedTitleClick,
+                        overrideArticleContent = translatedArticle,
+                        modifier = Modifier
+                            .focusGroup()
+                            .focusRequester(focusArticle)
+                            .focusProperties {
+                                up = focusTopBar
+                            },
+                    )
                 }
             } else {
                 ArticleContent(
@@ -464,6 +481,7 @@ fun ArticleContent(
     screenType: ScreenType,
     onFeedTitleClick: () -> Unit,
     articleListState: LazyListState,
+    overrideArticleContent: LinearArticle? = null,
     modifier: Modifier = Modifier,
 ) {
     val toolbarColor = MaterialTheme.colorScheme.surface.toArgb()
@@ -520,8 +538,8 @@ fun ArticleContent(
         if (viewState.articleId > ID_UNSET) {
             when (viewState.textToDisplay) {
                 TextToDisplay.CONTENT -> {
-                    linearArticleContent(
-                        articleContent = viewState.articleContent,
+                        linearArticleContent(
+                        articleContent = overrideArticleContent ?: viewState.articleContent,
                         onLinkClick = { link, index ->
                             if (index != null) {
                                 coroutineScope.launch {
