@@ -200,6 +200,9 @@ class MigrationFrom37To38(
             ALTER TABLE feeds ADD COLUMN summarize_on_open INTEGER NOT NULL DEFAULT 0
             """.trimIndent(),
         )
+        database.execSQL("ALTER TABLE feeds ADD COLUMN translate_enabled INTEGER NOT NULL DEFAULT 0")
+        database.execSQL("ALTER TABLE feeds ADD COLUMN translation_source_language TEXT")
+        database.execSQL("ALTER TABLE feeds ADD COLUMN translation_target_language TEXT")
     }
 }
 

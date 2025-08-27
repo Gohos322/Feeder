@@ -54,6 +54,10 @@ const val COL_SKIP_DUPLICATES = "skip_duplicates"
 const val COL_BLOCK_TIME = "block_time"
 const val COL_RETRY_AFTER = "retry_after"
 const val COL_SUMMARIZE_ON_OPEN = "summarize_on_open"
+// Translation settings per feed
+const val COL_TRANSLATE_ENABLED = "translate_enabled"
+const val COL_TRANSLATION_SOURCE_LANG = "translation_source_language"
+const val COL_TRANSLATION_TARGET_LANG = "translation_target_language"
 
 // year 5000
 val FAR_FUTURE = Instant.ofEpochSecond(95635369646)

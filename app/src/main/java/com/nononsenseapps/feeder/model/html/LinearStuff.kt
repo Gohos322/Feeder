@@ -23,6 +23,8 @@ data class LinearArticle(
                 }
             }.flatten()
             .toMap()
+
+    companion object {}
 }
 
 /**

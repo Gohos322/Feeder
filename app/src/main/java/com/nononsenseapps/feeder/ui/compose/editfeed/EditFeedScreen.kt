@@ -82,6 +82,9 @@ import com.nononsenseapps.feeder.ui.compose.utils.ImmutableHolder
 import com.nononsenseapps.feeder.ui.compose.utils.LocalWindowSizeMetrics
 import com.nononsenseapps.feeder.ui.compose.utils.ScreenType
 import com.nononsenseapps.feeder.ui.compose.utils.getScreenType
+import com.nononsenseapps.feeder.ui.compose.utils.immutableListHolderOf
+import java.util.Locale
+import androidx.compose.foundation.layout.Spacer
 import com.nononsenseapps.feeder.ui.compose.utils.rememberApiPermissionState
 
 @Composable
@@ -521,6 +524,96 @@ fun ColumnScope.RightContent(
         description = stringResource(id = R.string.only_enable_for_bad_id_feeds),
         icon = null,
     )
+    // Translation settings per feed
+    SwitchSetting(
+        title = stringResource(id = R.string.translate_articles),
+        checked = viewState.translateEnabled,
+        { viewState.translateEnabled = it },
+        icon = null,
+    )
+    AnimatedVisibility(visible = viewState.translateEnabled) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Prepare list of language codes and display names
+            val languages = remember {
+                Locale.getISOLanguages().map { code ->
+                    code to Locale(code).getDisplayLanguage(Locale.getDefault())
+                }.sortedBy { it.second }
+            }
+            // Source language selection
+            var showSourceSuggestions by rememberSaveable { mutableStateOf(false) }
+            var sourceDisplay by rememberSaveable {
+                mutableStateOf(
+                    viewState.translationSourceLanguage?.let { code ->
+                        languages.find { it.first == code }?.second ?: ""
+                    } ?: ""
+                )
+            }
+            val sourceSuggestions = remember(sourceDisplay) {
+                languages.map { it.second }.filter { it.contains(sourceDisplay, ignoreCase = true) }.toTypedArray()
+            }
+            AutoCompleteResults(
+                displaySuggestions = showSourceSuggestions,
+                suggestions = immutableListHolderOf(*sourceSuggestions),
+                onSuggestionClick = { suggestion ->
+                    languages.find { it.second == suggestion }?.let { (code, name) ->
+                        viewState.translationSourceLanguage = code
+                        sourceDisplay = name
+                        showSourceSuggestions = false
+                    }
+                },
+                suggestionContent = { suggestion -> Text(text = suggestion) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                OutlinedTextField(
+                    value = sourceDisplay,
+                    onValueChange = { input ->
+                        sourceDisplay = input
+                        showSourceSuggestions = true
+                    },
+                    label = { Text(stringResource(id = R.string.source_language)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            // Target language selection
+            var showTargetSuggestions by rememberSaveable { mutableStateOf(false) }
+            var targetDisplay by rememberSaveable {
+                mutableStateOf(
+                    viewState.translationTargetLanguage?.let { code ->
+                        languages.find { it.first == code }?.second ?: ""
+                    } ?: ""
+                )
+            }
+            val targetSuggestions = remember(targetDisplay) {
+                languages.map { it.second }.filter { it.contains(targetDisplay, ignoreCase = true) }.toTypedArray()
+            }
+            AutoCompleteResults(
+                displaySuggestions = showTargetSuggestions,
+                suggestions = immutableListHolderOf(*targetSuggestions),
+                onSuggestionClick = { suggestion ->
+                    languages.find { it.second == suggestion }?.let { (code, name) ->
+                        viewState.translationTargetLanguage = code
+                        targetDisplay = name
+                        showTargetSuggestions = false
+                    }
+                },
+                suggestionContent = { suggestion -> Text(text = suggestion) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                OutlinedTextField(
+                    value = targetDisplay,
+                    onValueChange = { input ->
+                        targetDisplay = input
+                        showTargetSuggestions = true
+                    },
+                    label = { Text(stringResource(id = R.string.target_language)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
     HorizontalDivider(modifier = Modifier.fillMaxWidth())
     GroupTitle(
         startingSpace = false,
@@ -577,6 +670,10 @@ interface EditFeedScreenState {
     var articleOpener: String
     var alternateId: Boolean
     var summarizeOnOpen: Boolean
+    // Translation settings
+    var translateEnabled: Boolean
+    var translationSourceLanguage: String?
+    var translationTargetLanguage: String?
     val isOkToSave: Boolean
     val isNotValidUrl: Boolean
     val isOpenItemWithBrowser: Boolean
@@ -609,7 +706,6 @@ private class ScreenState(
     override var skipDuplicates: Boolean by mutableStateOf(false)
     override var articleOpener: String by mutableStateOf("")
     override var alternateId: Boolean by mutableStateOf(false)
-    override var summarizeOnOpen: Boolean by mutableStateOf(false)
 }
 
 @Preview("Edit Feed Phone")

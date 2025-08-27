@@ -14,6 +14,8 @@ import com.nononsenseapps.feeder.background.runOnceRssSync
 import com.nononsenseapps.feeder.base.DIAwareViewModel
 import com.nononsenseapps.feeder.db.room.Feed
 import com.nononsenseapps.feeder.ui.compose.utils.mutableSavedStateOf
+import com.nononsenseapps.feeder.util.getOrCreateFromUri
+import com.nononsenseapps.feeder.util.isNostrUri
 import com.nononsenseapps.feeder.util.sloppyLinkToStrictURLOrNull
 import kotlinx.coroutines.launch
 import org.kodein.di.DI
@@ -44,6 +46,10 @@ class CreateFeedScreenViewModel(
     override var articleOpener: String by mutableSavedStateOf(state, "")
     override var alternateId: Boolean by mutableSavedStateOf(state, false)
     override var summarizeOnOpen: Boolean by mutableSavedStateOf(state, false)
+    // Translation settings per feed
+    override var translateEnabled: Boolean by mutableSavedStateOf(state, false)
+    override var translationSourceLanguage: String? by mutableSavedStateOf<String?>(state, null)
+    override var translationTargetLanguage: String? by mutableSavedStateOf<String?>(state, null)
     override var allTags: List<String> by mutableStateOf(emptyList())
     override var defaultTitle: String by mutableStateOf(state["feedTitle"] ?: "")
     override var feedImage: String by mutableStateOf(state["feedImage"] ?: "")
@@ -83,11 +89,11 @@ class CreateFeedScreenViewModel(
             val feedId =
                 repository.saveFeed(
                     Feed(
-                        url = URL(feedUrl),
+                        url = URL(feedUrl.getOrCreateFromUri()),
                         title = feedTitle,
                         customTitle = feedTitle,
                         tag = feedTag,
-                        fullTextByDefault = fullTextByDefault,
+                        fullTextByDefault = if (feedUrl.isNostrUri()) false else fullTextByDefault,
                         notify = notify,
                         skipDuplicates = skipDuplicates,
                         openArticlesWith = articleOpener,

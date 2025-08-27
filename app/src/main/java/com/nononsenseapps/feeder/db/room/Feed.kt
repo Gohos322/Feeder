@@ -16,6 +16,9 @@ import com.nononsenseapps.feeder.db.COL_NOTIFY
 import com.nononsenseapps.feeder.db.COL_OPEN_ARTICLES_WITH
 import com.nononsenseapps.feeder.db.COL_RESPONSEHASH
 import com.nononsenseapps.feeder.db.COL_RETRY_AFTER
+import com.nononsenseapps.feeder.db.COL_TRANSLATE_ENABLED
+import com.nononsenseapps.feeder.db.COL_TRANSLATION_SOURCE_LANG
+import com.nononsenseapps.feeder.db.COL_TRANSLATION_TARGET_LANG
 import com.nononsenseapps.feeder.db.COL_SITE_FETCHED
 import com.nononsenseapps.feeder.db.COL_SKIP_DUPLICATES
 import com.nononsenseapps.feeder.db.COL_SUMMARIZE_ON_OPEN
@@ -61,6 +64,10 @@ data class Feed
         // Time when feed is allowed to be synced again earliest, based on retry-after response header
         @ColumnInfo(name = COL_RETRY_AFTER) var retryAfter: Instant = Instant.EPOCH,
         @ColumnInfo(name = COL_SUMMARIZE_ON_OPEN) var summarizeOnOpen: Boolean = false,
+        // Translation settings per feed
+        @ColumnInfo(name = COL_TRANSLATE_ENABLED) var translateEnabled: Boolean = false,
+        @ColumnInfo(name = COL_TRANSLATION_SOURCE_LANG) var translationSourceLanguage: String? = null,
+        @ColumnInfo(name = COL_TRANSLATION_TARGET_LANG) var translationTargetLanguage: String? = null,
     ) {
         constructor() : this(id = ID_UNSET)
 

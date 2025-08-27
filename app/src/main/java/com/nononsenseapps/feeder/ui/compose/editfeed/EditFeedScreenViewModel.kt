@@ -47,6 +47,10 @@ class EditFeedScreenViewModel(
     override var articleOpener: String by mutableSavedStateOf(state, "")
     override var alternateId: Boolean by mutableSavedStateOf(state, false)
     override var summarizeOnOpen: Boolean by mutableSavedStateOf(state, false)
+    // Translation settings per feed
+    override var translateEnabled: Boolean by mutableSavedStateOf(state, false)
+    override var translationSourceLanguage: String? by mutableSavedStateOf<String?>(state, null)
+    override var translationTargetLanguage: String? by mutableSavedStateOf<String?>(state, null)
     override var allTags: List<String> by mutableStateOf(emptyList())
 
     override var feedImage: String by mutableStateOf("")
@@ -112,6 +116,15 @@ class EditFeedScreenViewModel(
             if (!state.contains("summarizeOnOpen")) {
                 summarizeOnOpen = feed.summarizeOnOpen
             }
+            if (!state.contains("translateEnabled")) {
+                translateEnabled = feed.translateEnabled
+            }
+            if (!state.contains("translationSourceLanguage")) {
+                translationSourceLanguage = feed.translationSourceLanguage
+            }
+            if (!state.contains("translationTargetLanguage")) {
+                translationTargetLanguage = feed.translationTargetLanguage
+            }
 
             repository.allTags
                 .collect { value ->
@@ -138,6 +151,9 @@ class EditFeedScreenViewModel(
                     openArticlesWith = articleOpener,
                     alternateId = alternateId,
                     summarizeOnOpen = summarizeOnOpen,
+                    translateEnabled = translateEnabled,
+                    translationSourceLanguage = translationSourceLanguage,
+                    translationTargetLanguage = translationTargetLanguage,
                 )
 
             // No point in doing anything unless they actually differ
