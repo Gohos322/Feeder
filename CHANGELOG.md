@@ -15,6 +15,10 @@
     - Displays translated text with a loading indicator and allows switching back to original text.
 - Updated imports and UI components to support scrollable translated text view.
 
+### Fixed
+- Preserve rich-text formatting (bold, italic, underline, links, code, headings, etc.) when translating articles by round-tripping through HTML tags instead of stripping to plain text.
+- Fix compilation error "Unresolved reference 'Companion'" in LinearArticle.Companion.fromHtml by adding empty companion object body to LinearArticle (LinearStuff.kt).
+
 ### Alternatives to ML Kit
 - TensorFlow Lite translation models bundled in-app.
 - ONNX Runtime mobile with pre-trained translation models.
