@@ -83,6 +83,7 @@ import java.time.ZonedDateTime
 import com.nononsenseapps.feeder.translation.TranslationManager
 import com.nononsenseapps.feeder.translation.downloadModelIfNeededSuspend
 import com.nononsenseapps.feeder.translation.translateTextSuspend
+import com.nononsenseapps.feeder.translation.translateLinearArticleSuspend
 import com.nononsenseapps.feeder.translation.toPlainText
 // For translation display
 import androidx.compose.foundation.rememberScrollState
@@ -190,7 +191,7 @@ fun ArticleScreen(
     var showingTranslated by rememberSaveable { mutableStateOf(false) }
     // Translation content state
     var translationLoading by remember { mutableStateOf(false) }
-    var translatedText by remember { mutableStateOf<String?>(null) }
+    var translatedArticleState by remember { mutableStateOf<LinearArticle?>(null) }
 
     val closeMenuText = stringResource(id = R.string.close_menu)
     // Trigger translation when toggled
@@ -204,12 +205,13 @@ fun ArticleScreen(
                 )
                 // download model if needed
                 translator.downloadModelIfNeededSuspend()
-                // prepare plain text and translate
-                val plain = viewState.articleContent.toPlainText()
-                translatedText = translator.translateTextSuspend(plain)
+                // Translate the LinearArticle directly to preserve structure
+                val translatedArticle: LinearArticle =
+                    translator.translateLinearArticleSuspend(viewState.articleContent)
+                translatedArticleState = translatedArticle
             } catch (e: Exception) {
-                // on error, show message
-                translatedText = e.localizedMessage ?: e.toString()
+                // on error, clear translated state
+                translatedArticleState = null
             } finally {
                 translationLoading = false
             }
@@ -429,19 +431,7 @@ fun ArticleScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
-                    // display translated content with preserved formatting
-                    val translatedArticle = remember(translatedText, viewState.articleContent) {
-                        val original = viewState.articleContent
-                        val paragraphs = translatedText.orEmpty().split("\n")
-                        var idx = 0
-                        val newElements = original.elements.map { element ->
-                            if (element is LinearText) {
-                                val newText = if (idx < paragraphs.size) paragraphs[idx++] else ""
-                                element.copy(text = newText)
-                            } else element
-                        }
-                        LinearArticle(newElements)
-                    }
+                    val translatedArticle = translatedArticleState
                     // render translated article using same layout
                     ArticleContent(
                         viewState = viewState,
